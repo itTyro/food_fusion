@@ -75,13 +75,11 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         long orderId = IdWorker.getId();
 
         // 获取实收金额
-//        int amount = 0;
         AtomicInteger amount = new AtomicInteger(0);  //保证线程安全
 
         //订单明细表集合
         List<OrderDetail> orderDetailList = new ArrayList<>();
         for (ShoppingCart shoppingCart : shoppingCartList) {
-//            amount += shoppingCart.getNumber() * shoppingCart.getAmount().intValue();
             // 计算实收金额
             amount.addAndGet(shoppingCart.getAmount().multiply(new BigDecimal(shoppingCart.getNumber())).intValue());
             // 需要将信息明细拷贝到订单信息明细表里
@@ -221,7 +219,6 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
 
         shoppingCartService.saveBatch(shoppingCartList);
 
-        // 将数据重新添加到购物车
 
     }
 

@@ -118,28 +118,7 @@ public class DishServiceImpl extends ServiceImpl<DishMapper, Dish> implements Di
             dishFlavorService.saveBatch(flavors);
         }
 
-        /*// 根据菜品id查口味数据
-        List<DishFlavor> flavorList = dishFlavorService.list(queryWrapper);
 
-        if (!flavors.isEmpty()){
-            for (DishFlavor flavor : flavors) {
-                flavor.setDishId(dishId);
-            }
-        }
-        // 如果原数据里口味为空，修改的时候添加了口味，则需要将口味添加到表中
-        if (flavorList.isEmpty() && !flavors.isEmpty()){
-            log.info("保存口味");
-            dishFlavorService.saveBatch(flavors);
-        } else if (!flavorList.isEmpty() && !flavors.isEmpty()) {
-            // 如果两个都不为空则修改口味的数据
-            log.info("修改口味");
-            dishFlavorService.updateBatchById(flavors);
-        } else if (!flavorList.isEmpty() && flavors.isEmpty()) {
-            // 原始口味里有数据，传过来的时候没有则删除原始口味
-            log.info("删除口味");
-            dishFlavorService.remove(queryWrapper);
-        }  // 都为空则不需要改变
-*/
     }
 
     /**
