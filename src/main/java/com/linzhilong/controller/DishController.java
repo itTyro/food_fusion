@@ -16,6 +16,8 @@ import com.linzhilong.service.SetmealDishService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -217,7 +219,7 @@ public class DishController {
 
     /**
      * 查询列表数据
-     *
+     * 使用redis进行缓存，减小数据库压力
      * @param dish 用对象接收通用性更强
      * @return
      */

@@ -10,6 +10,10 @@ import com.linzhilong.service.SetmealDishService;
 import com.linzhilong.service.SetmealService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -28,12 +32,16 @@ public class SetmealController {
     @Autowired
     private SetmealDishService setmealDishService;
 
+    @Autowired
+    private CacheManager cacheManager;
+
     /**
      * 添加套餐
      * @param setmealDto
      * @return
      */
     @PostMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> save(@RequestBody SetmealDto setmealDto) {
         log.info("接收到的数据：{}",setmealDto.toString());
         setmealService.saveWithDish(setmealDto);
@@ -73,10 +81,12 @@ public class SetmealController {
 
     /**
      * 修改数据
+     * 删除修改的数据的缓存
      * @param setmealDto
      * @return
      */
     @PutMapping
+    @CacheEvict(value = "setmealCache",key = "#setmealDto.categoryId + '_' + #setmealDto.status")
     public R<String> update(@RequestBody SetmealDto setmealDto) {
         log.info("套餐管理修改数据接受的参数：{}",setmealDto.toString());
 
@@ -86,11 +96,13 @@ public class SetmealController {
 
     /**
      * 修改状态
+     * allEntries 清空缓存名称的全部缓存，默认false
      * @param status 拼在路径上用@PathVariable获取
      * @param ids 数组对象用@RequestParam("ids")
      * @return 返回提示信息
      */
     @PostMapping("/status/{status}")
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> putStatus(@PathVariable Integer status, @RequestParam("ids") List<Long> ids) {
         log.info("status：{},ids: {}",status,ids.toString());
 
@@ -111,10 +123,12 @@ public class SetmealController {
 
     /**
      * 删除套餐，售卖状态时不可删除
+     * 清空全部缓存
      * @param ids
      * @return
      */
     @DeleteMapping
+    @CacheEvict(value = "setmealCache",allEntries = true)
     public R<String> delete(@RequestParam("ids") List<Long> ids) {
         log.info("需要删除的数据：{}", ids.toString());
         if (ids.isEmpty() ) {
@@ -125,7 +139,14 @@ public class SetmealController {
         return R.success("删除套餐成功");
     }
 
+    /**
+     * 查询套餐数据
+     * 使用Cacheable 有数据直接返回，没有数据则查询
+     * @param setmeal
+     * @return
+     */
     @GetMapping("/list")
+    @Cacheable(value = "setmealCache",key = "#setmeal.categoryId + '_' + #setmeal.status")
     public R<List<Setmeal>> list(Setmeal setmeal) {
         log.info("查询套餐全部数据。。。");
         List<Setmeal> list = setmealService.getList(setmeal);
