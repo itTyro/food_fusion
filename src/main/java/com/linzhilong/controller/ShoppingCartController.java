@@ -46,27 +46,7 @@ public class ShoppingCartController {
     public R<String> save(@RequestBody ShoppingCart shoppingCart) {
         log.info("要添加的数据：{}", shoppingCart.toString());
 
-        Long userId = BaseContext.getCurrentId();
-        shoppingCart.setUserId(userId);
-
-        //如果表中已经有相应的数据则把数量加一就行
-        LambdaQueryWrapper<ShoppingCart> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(ShoppingCart::getUserId, userId);
-        queryWrapper.eq(shoppingCart.getDishId() != null, ShoppingCart::getDishId, shoppingCart.getDishId());
-        queryWrapper.eq(shoppingCart.getSetmealId() != null, ShoppingCart::getSetmealId, shoppingCart.getSetmealId());
-
-        ShoppingCart result = shoppingCartService.getOne(queryWrapper);
-
-        if (result != null) {
-            // 有该数据，执行修改操作，数量加1
-            Integer number = result.getNumber() + 1;
-            result.setNumber(number);
-            shoppingCartService.updateById(result);
-        } else {
-            // 没有该数据，执行添加操作
-            shoppingCart.setCreateTime(LocalDateTime.now());
-            shoppingCartService.save(shoppingCart);
-        }
+      shoppingCartService.add(shoppingCart);
 
         return R.success("成功添加购物车");
     }

@@ -209,15 +209,19 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         queryWrapper.eq(id != null,OrderDetail::getOrderId,id);
         List<OrderDetail> list = orderDetailService.list(queryWrapper);
 
-        List<ShoppingCart> shoppingCartList = new ArrayList<>();
+//        List<ShoppingCart> shoppingCartList = new ArrayList<>();
         for (OrderDetail orderDetail : list) {
             ShoppingCart shoppingCart = new ShoppingCart();
             BeanUtils.copyProperties(orderDetail,shoppingCart);
             shoppingCart.setUserId(BaseContext.getCurrentId());
-            shoppingCartList.add(shoppingCart);
+            // 把获取到购物车id设置为空，让他自己生成，否则可能报主键不唯一的异常
+            shoppingCart.setId(null);
+            // 调用购物车添加的功能，如果购物车原本有再来一单的菜品，则往上添加数量，否则会有两个数据
+            shoppingCartService.add(shoppingCart);
+//            shoppingCartList.add(shoppingCart);
         }
 
-        shoppingCartService.saveBatch(shoppingCartList);
+//        shoppingCartService.saveBatch(shoppingCartList);
 
 
     }
