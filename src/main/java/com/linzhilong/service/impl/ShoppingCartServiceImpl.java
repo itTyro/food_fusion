@@ -30,9 +30,9 @@ public class ShoppingCartServiceImpl extends ServiceImpl<ShoppingCartMapper, Sho
         ShoppingCart result = this.getOne(queryWrapper);
 
         if (result != null) {
-            // 有该数据，执行修改操作，数量加1
             Integer number = 0;
             if (shoppingCartNumber == null) {
+            // 有该数据，执行修改操作，数量加1
                 number = result.getNumber() + 1;
             } else {
                 // 给再来一单添加数据准备的
