@@ -12,7 +12,7 @@
     </parent>
 
     <groupId>org.linzhilong</groupId>
-    <artifactId>reggie_take_out</artifactId>
+    <artifactId>food_fusion</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
